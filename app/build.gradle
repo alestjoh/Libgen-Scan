@@ -1,12 +1,14 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 28
     defaultConfig {
         applicationId "com.nfd.libgenscan"
         //can this be older?
         minSdkVersion 23
-        targetSdkVersion 26
+        targetSdkVersion 28
         versionCode 1
         versionName "1.2"
     }
@@ -21,10 +23,13 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    // testCompile 'junit:junit:4.12'
-    compile 'com.android.support:support-v4:26.0.1@aar'
-    compile 'com.android.support:appcompat-v7:26.0.1@aar'
-    compile 'me.dm7.barcodescanner:zbar:1.9.8'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:support-v4:28.0.0@aar'
+    implementation 'com.android.support:appcompat-v7:28.0.0@aar'
+    implementation 'me.dm7.barcodescanner:zbar:1.9.8'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
 
+repositories {
+    mavenCentral()
 }

@@ -1,10 +1,13 @@
 buildscript {
+    ext.kotlin_version = '1.3.50'
     repositories {
         mavenCentral()
+        google()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.android.tools.build:gradle:3.4.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -30,8 +33,7 @@ subprojects {
         ext.pluginContainer = project.getPlugins()
         if (ext.pluginContainer.hasPlugin("com.android.application") || ext.pluginContainer.hasPlugin("com.android.library")) {
             android {
-                compileSdkVersion 26
-                buildToolsVersion '25.0.3'
+                compileSdkVersion 28
 
                 android {
                     lintOptions {
@@ -42,7 +44,7 @@ subprojects {
                 defaultConfig {
                     minSdkVersion 23
 
-                    targetSdkVersion 26
+                    targetSdkVersion 28
                     versionCode 184
                     versionName "1.8.4"
                 }
@@ -51,6 +53,3 @@ subprojects {
     }
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.14'
-}
