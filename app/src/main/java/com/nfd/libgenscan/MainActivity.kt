@@ -5,9 +5,16 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
+import com.google.gson.GsonBuilder
 import me.dm7.barcodescanner.zbar.Result
 import me.dm7.barcodescanner.zbar.ZBarScannerView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.Exception
 
 /* Scanning UI and main menu. This should always be the first thing the user sees on launch.
@@ -21,12 +28,34 @@ class MainActivity : Activity(), ZBarScannerView.ResultHandler {
     //TODO: annotate s.t. < 23 are accepted
     public override fun onCreate(state: Bundle?) {
         super.onCreate(state)
-        setContentView(mScannerView)                // Set the scanner view as the content view
+        setContentView(mScannerView)
 
         // Request permission. This does it asynchronously so we have to wait for onRequestPermissionResult before
         // trying to open the camera.
-        if (!haveCameraPermission())
+        if (!haveCameraPermission()) {
             requestPermissions(arrayOf(Manifest.permission.CAMERA), PERMISSION_REQUEST_CAMERA)
+        } else {
+            prepareCamera()
+        }
+
+        val bookDeserializer = GsonBuilder()
+                .setLenient()
+                .registerTypeAdapter(BookResponse::class.java, BookResponseDeserializer())
+                .create()
+        val retrofit = Retrofit.Builder()
+                .baseUrl("https://openlibrary.org/api/")
+                .addConverterFactory(GsonConverterFactory.create(bookDeserializer))
+                .build()
+        val openLibraryService = retrofit.create(OpenLibraryService::class.java)
+        openLibraryService.getBook("ISBN:9780980200447").enqueue(object : Callback<BookResponse> {
+            override fun onFailure(call: Call<BookResponse>, t: Throwable) {
+                throw t
+            }
+
+            override fun onResponse(call: Call<BookResponse>, response: Response<BookResponse>) {
+                Log.i("MEMEME", response.body().toString())
+            }
+        })
     }
 
     private fun haveCameraPermission(): Boolean =
@@ -40,7 +69,7 @@ class MainActivity : Activity(), ZBarScannerView.ResultHandler {
         when (requestCode) {
             PERMISSION_REQUEST_CAMERA -> {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mScannerView.startCamera()
+                    prepareCamera()
                 } else {
                     finish()
                 }
@@ -48,23 +77,20 @@ class MainActivity : Activity(), ZBarScannerView.ResultHandler {
         }
     }
 
-    public override fun onResume() {
-        super.onResume()
-        mScannerView.setResultHandler(this) // Register ourselves as a handler for scan results.
-        mScannerView.startCamera()          // Start camera on resume
+    private fun prepareCamera() {
+        mScannerView.startCamera()
+        mScannerView.setResultHandler(this)
     }
 
-    public override fun onPause() {
-        super.onPause()
-        mScannerView.stopCamera()           // Stop camera on pause
+    override fun onDestroy() {
+        super.onDestroy()
+        mScannerView.stopCamera()
     }
 
     override fun handleResult(rawResult: Result) {
 
         try {
-            val b = BookRef(
-                    rawResult.contents,
-                    rawResult.barcodeFormat)
+            val b = BookRef(rawResult.contents, rawResult.barcodeFormat)
             BookRef.addToList(b)
 
             //remove; if set to auto-open, immediately call openers before throwing ref out
