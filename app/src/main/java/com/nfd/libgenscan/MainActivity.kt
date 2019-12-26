@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.widget.Toast
 import me.dm7.barcodescanner.zbar.Result
 import me.dm7.barcodescanner.zbar.ZBarScannerView
+import java.lang.Exception
 
 /* Scanning UI and main menu. This should always be the first thing the user sees on launch.
  * TODO: add history menu, autoscan option, and restore support for pre-Marshmallow if possible
@@ -15,12 +16,11 @@ import me.dm7.barcodescanner.zbar.ZBarScannerView
 
 //AppCompatActivity was actually causing crashes?
 class MainActivity : Activity(), ZBarScannerView.ResultHandler {
-    private var mScannerView: ZBarScannerView? = null
+    private val mScannerView: ZBarScannerView by lazy { ZBarScannerView(this) }
 
     //TODO: annotate s.t. < 23 are accepted
     public override fun onCreate(state: Bundle?) {
         super.onCreate(state)
-        mScannerView = ZBarScannerView(this)    // Programmatically initialize the scanner view
         setContentView(mScannerView)                // Set the scanner view as the content view
 
         // Request permission. This does it asynchronously so we have to wait for onRequestPermissionResult before
@@ -40,7 +40,7 @@ class MainActivity : Activity(), ZBarScannerView.ResultHandler {
         when (requestCode) {
             PERMISSION_REQUEST_CAMERA -> {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mScannerView!!.startCamera()
+                    mScannerView.startCamera()
                 } else {
                     finish()
                 }
@@ -51,19 +51,18 @@ class MainActivity : Activity(), ZBarScannerView.ResultHandler {
 
     public override fun onResume() {
         super.onResume()
-        mScannerView!!.setResultHandler(this) // Register ourselves as a handler for scan results.
-        mScannerView!!.startCamera()          // Start camera on resume
+        mScannerView.setResultHandler(this) // Register ourselves as a handler for scan results.
+        mScannerView.startCamera()          // Start camera on resume
     }
 
     public override fun onPause() {
         super.onPause()
-        mScannerView!!.stopCamera()           // Stop camera on pause
+        mScannerView.stopCamera()           // Stop camera on pause
     }
 
     public override fun onDestroy() {
         super.onDestroy()
-        mScannerView!!.stopCamera()
-        mScannerView = null
+        mScannerView.stopCamera()
     }
 
     //intended to fire URL opener intents from searches
@@ -74,7 +73,6 @@ class MainActivity : Activity(), ZBarScannerView.ResultHandler {
     override fun handleResult(rawResult: Result) {
 
         try {
-
             val b = BookRef(
                     rawResult.contents,
                     rawResult.barcodeFormat,
@@ -85,12 +83,12 @@ class MainActivity : Activity(), ZBarScannerView.ResultHandler {
             // gotta figure out settings activities first
             b.searchBook()
 
-            mScannerView!!.resumeCameraPreview(this)
+            mScannerView.resumeCameraPreview(this)
 
-        } catch (e: IllegalArgumentException) {
+        } catch (e: Exception) {
             Toast.makeText(applicationContext, "Barcode format not supported; try another book.",
                     Toast.LENGTH_SHORT).show()
-            mScannerView!!.resumeCameraPreview(this)
+            mScannerView.resumeCameraPreview(this)
         }
     }
 
