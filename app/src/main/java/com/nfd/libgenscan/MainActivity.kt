@@ -48,7 +48,6 @@ class MainActivity : Activity(), ZBarScannerView.ResultHandler {
         }
     }
 
-
     public override fun onResume() {
         super.onResume()
         mScannerView.setResultHandler(this) // Register ourselves as a handler for scan results.
@@ -60,28 +59,18 @@ class MainActivity : Activity(), ZBarScannerView.ResultHandler {
         mScannerView.stopCamera()           // Stop camera on pause
     }
 
-    public override fun onDestroy() {
-        super.onDestroy()
-        mScannerView.stopCamera()
-    }
-
-    //intended to fire URL opener intents from searches
-    internal fun fire(i: Intent) {
-        startActivity(i)
-    }
-
     override fun handleResult(rawResult: Result) {
 
         try {
             val b = BookRef(
                     rawResult.contents,
-                    rawResult.barcodeFormat,
-                    this)
+                    rawResult.barcodeFormat)
             BookRef.addToList(b)
 
             //remove; if set to auto-open, immediately call openers before throwing ref out
             // gotta figure out settings activities first
-            b.searchBook()
+            val intent = Intent(Intent.ACTION_VIEW, b.getIsbnUri())
+            startActivity(intent)
 
             mScannerView.resumeCameraPreview(this)
 

@@ -1,7 +1,6 @@
 package com.nfd.libgenscan
 
 import me.dm7.barcodescanner.zbar.BarcodeFormat
-import android.content.Intent
 import android.net.Uri
 
 /**
@@ -9,10 +8,9 @@ import android.net.Uri
  * @version 2016-08-26.
  * Wrapper to hold a reference to some book; provided for options for future expansion (e.g. UPC manipulation)
  */
-class BookRef(
-        private val id: String,
-        format: BarcodeFormat,
-        private val parent: MainActivity) {
+data class BookRef(
+        val id: String,
+        val format: BarcodeFormat) {
 
     companion object {
         private val allowedFormats = listOf(BarcodeFormat.ISBN10, BarcodeFormat.ISBN13)
@@ -21,21 +19,18 @@ class BookRef(
         fun addToList(b: BookRef) {
             bookList.add(b)
         }
+
+        fun isFormatAllowed(b: BarcodeFormat): Boolean {
+            return allowedFormats.contains(b)
+        }
     }
 
     init {
-        require(isAllowed(format)) { "Format not supported" }
+        require(isFormatAllowed(format)) { "Format not supported" }
     }
 
-    private fun isAllowed(b: BarcodeFormat): Boolean {
-        return allowedFormats.contains(b)
-    }
+    fun getIsbnUri(): Uri = Uri.parse("http://libgen.is/search.php?req=" + id +
+            "&lg_topic=libgen&open=0&view=simple&res=25&phrase=1&column=identifier")
 
     //TODO: add more libraries, possibly ways of handling other types of barcodes (search by UPC?)
-    fun searchBook() {
-        val uri = "http://libgen.is/search.php?req=" + id +
-                "&lg_topic=libgen&open=0&view=simple&res=25&phrase=1&column=identifier"
-        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-        parent.fire(browserIntent)
-    }
 }
