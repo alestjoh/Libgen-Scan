@@ -2,7 +2,6 @@ package com.nfd.libgenscan
 
 import android.Manifest
 import android.app.Activity
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -15,7 +14,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-/* Scanning UI and main menu. This should always be the first thing the user sees on launch.
+/*
+ * Scanning UI and main menu. This should always be the first thing the user sees on launch.
  * TODO: add history menu, autoscan option, and restore support for pre-Marshmallow if possible
  */
 
@@ -35,17 +35,6 @@ class MainActivity : Activity(), ZBarScannerView.ResultHandler {
         } else {
             prepareCamera()
         }
-
-        val openLibraryService = OpenLibraryService.getInstance()
-        openLibraryService.getBook("ISBN:9780980200447").enqueue(object : Callback<BookResponse> {
-            override fun onFailure(call: Call<BookResponse>, t: Throwable) {
-                throw t
-            }
-
-            override fun onResponse(call: Call<BookResponse>, response: Response<BookResponse>) {
-                Log.i("MEMEME", response.body().toString())
-            }
-        })
     }
 
     private fun haveCameraPermission(): Boolean =
@@ -80,13 +69,15 @@ class MainActivity : Activity(), ZBarScannerView.ResultHandler {
     override fun handleResult(rawResult: Result) {
 
         try {
-            val b = BookRef(rawResult.contents, rawResult.barcodeFormat)
-            BookRef.addToList(b)
+            val bookRef = BookRef(rawResult.contents, rawResult.barcodeFormat)
+            BookRef.addToList(bookRef)
 
             //remove; if set to auto-open, immediately call openers before throwing ref out
             // gotta figure out settings activities first
-            val intent = Intent(Intent.ACTION_VIEW, b.getIsbnUri())
-            startActivity(intent)
+//            val intent = Intent(Intent.ACTION_VIEW, b.getIsbnUri())
+//            startActivity(intent)
+
+            findBookInOpenLibrary(bookRef)
 
             mScannerView.resumeCameraPreview(this)
 
@@ -97,7 +88,24 @@ class MainActivity : Activity(), ZBarScannerView.ResultHandler {
         }
     }
 
+    private fun findBookInOpenLibrary(bookRef: BookRef) {
+        OpenLibraryService.getInstance().getBook(bookRef.id).enqueue(
+                object : Callback<BookResponse> {
+                    override fun onFailure(call: Call<BookResponse>, t: Throwable) {
+                        Log.e(TAG, "Error retrieving book from Open Library:")
+                        Log.e(TAG, t.message)
+                    }
+
+                    override fun onResponse(call: Call<BookResponse>, response: Response<BookResponse>) {
+                        Log.i(TAG, "Book successfully found in Open Library:")
+                        Log.i(TAG, response.body().toString())
+                    }
+                }
+        )
+    }
+
     companion object {
         const val PERMISSION_REQUEST_CAMERA = 1
+        val TAG: String = MainActivity::class.java.simpleName
     }
 }

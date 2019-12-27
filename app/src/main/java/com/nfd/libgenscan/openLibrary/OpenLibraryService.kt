@@ -7,7 +7,15 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+/**
+ * This interface contacts the Open Library API to get a book's title and author, given its ISBN.
+ */
 interface OpenLibraryService {
+
+    /**
+     * bibkeys will need to start with "ISBN:", followed by the isbn number.
+     * Other queries shouldn't be changed.
+     */
     @GET("books")
     fun getBook(
             @Query("bibkeys") isbn: String,
