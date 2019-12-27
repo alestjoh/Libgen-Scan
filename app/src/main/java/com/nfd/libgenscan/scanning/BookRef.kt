@@ -1,4 +1,4 @@
-package com.nfd.libgenscan
+package com.nfd.libgenscan.scanning
 
 import me.dm7.barcodescanner.zbar.BarcodeFormat
 

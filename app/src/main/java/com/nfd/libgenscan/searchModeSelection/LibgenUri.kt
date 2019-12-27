@@ -1,4 +1,4 @@
-package com.nfd.libgenscan
+package com.nfd.libgenscan.searchModeSelection
 
 import android.net.Uri
 
@@ -10,4 +10,8 @@ object LibgenUri {
     fun getTitleUri(title: String): Uri = Uri.parse(
             "http://libgen.is/search.php?req=" + title +
                     "&open=0&res=25&view=simple&phrase=1&column=title")
+
+    fun getAuthorUri(author: String): Uri = Uri.parse(
+            "http://libgen.is/search.php?req=" + author +
+                    "&open=0&res=25&view=simple&phrase=1&column=author")
 }

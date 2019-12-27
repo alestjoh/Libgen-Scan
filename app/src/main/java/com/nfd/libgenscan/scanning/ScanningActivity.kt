@@ -1,4 +1,4 @@
-package com.nfd.libgenscan
+package com.nfd.libgenscan.scanning
 
 import android.Manifest
 import android.app.Activity
@@ -9,6 +9,7 @@ import android.util.Log
 import android.widget.Toast
 import com.nfd.libgenscan.openLibrary.BookResponse
 import com.nfd.libgenscan.openLibrary.OpenLibraryService
+import com.nfd.libgenscan.searchModeSelection.SearchModeSelectionActivity
 import me.dm7.barcodescanner.zbar.BarcodeFormat
 import me.dm7.barcodescanner.zbar.Result
 import me.dm7.barcodescanner.zbar.ZBarScannerView

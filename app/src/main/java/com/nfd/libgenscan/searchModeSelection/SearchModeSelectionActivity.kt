@@ -1,8 +1,9 @@
-package com.nfd.libgenscan
+package com.nfd.libgenscan.searchModeSelection
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import com.nfd.libgenscan.R
 import com.nfd.libgenscan.openLibrary.BookData
 import kotlinx.android.synthetic.main.activity_search_mode_selection.*
 
