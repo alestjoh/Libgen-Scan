@@ -15,9 +15,14 @@ class SearchModeSelectionActivity : Activity() {
         setContentView(R.layout.activity_search_mode_selection)
 
         book = intent.getParcelableExtra(BOOK_REF)!!
+        textView_bookData_searchMode.text = book.toString()
 
         button_isbnSearch_searchMode.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, LibgenUri.getIsbnUri(book.isbn ?: "")))
+        }
+
+        button_titleSearch_searchMode.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, LibgenUri.getTitleUri(book.title ?: "")))
         }
     }
 
