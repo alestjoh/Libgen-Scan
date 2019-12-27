@@ -2,6 +2,7 @@ package com.nfd.libgenscan
 
 import android.Manifest
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -61,6 +62,7 @@ class ScanningActivity : Activity(), ZBarScannerView.ResultHandler {
         mScannerView.startCamera()
         mScannerView.setResultHandler(this)
 
+        // TODO: Delete after done testing handleResult
         val result = Result()
         result.barcodeFormat = BarcodeFormat.ISBN13
         result.contents = "9780980200447"
@@ -99,13 +101,19 @@ class ScanningActivity : Activity(), ZBarScannerView.ResultHandler {
         OpenLibraryService.getInstance().getBook(bookRef.id).enqueue(
                 object : Callback<BookResponse> {
                     override fun onFailure(call: Call<BookResponse>, t: Throwable) {
-                        Log.e(TAG, "Error retrieving book from Open Library:")
-                        Log.e(TAG, t.message)
+                        Log.e(TAG, "Error retrieving book from Open Library:" + t.message)
                     }
 
                     override fun onResponse(call: Call<BookResponse>, response: Response<BookResponse>) {
                         Log.i(TAG, "Book successfully found in Open Library:")
                         Log.i(TAG, response.body().toString())
+
+                        val bookData = response.body()!!.bookData
+                        bookData.isbn = bookRef.id
+
+                        val intent = Intent(this@ScanningActivity, SearchModeSelectionActivity::class.java)
+                        intent.putExtra(SearchModeSelectionActivity.BOOK_REF, bookData)
+                        startActivity(intent)
                     }
                 }
         )

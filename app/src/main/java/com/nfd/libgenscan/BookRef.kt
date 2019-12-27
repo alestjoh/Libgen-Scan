@@ -1,7 +1,6 @@
 package com.nfd.libgenscan
 
 import me.dm7.barcodescanner.zbar.BarcodeFormat
-import android.net.Uri
 
 /**
  * @author Alexander Ronsse-Tucherov
@@ -28,9 +27,6 @@ data class BookRef(
     init {
         require(isFormatAllowed(format)) { "Format not supported" }
     }
-
-    fun getIsbnUri(): Uri = Uri.parse("http://libgen.is/search.php?req=" + id +
-            "&lg_topic=libgen&open=0&view=simple&res=25&phrase=1&column=identifier")
 
     //TODO: add more libraries, possibly ways of handling other types of barcodes (search by UPC?)
 }

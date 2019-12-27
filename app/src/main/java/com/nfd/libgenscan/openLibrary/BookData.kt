@@ -15,19 +15,22 @@ data class BookData(
         val url: String?,
         val title: String?,
         val subtitle: String?,
-        val authors: List<Author>?
+        val authors: List<Author>?,
+        var isbn: String? = null
 ): Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
-            parcel.createTypedArrayList(Author))
+            parcel.createTypedArrayList(Author),
+            parcel.readString())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(url)
         parcel.writeString(title)
         parcel.writeString(subtitle)
         parcel.writeTypedList(authors)
+        parcel.writeString(isbn)
     }
 
     override fun describeContents(): Int {
