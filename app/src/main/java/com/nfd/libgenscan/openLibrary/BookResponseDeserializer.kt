@@ -1,4 +1,4 @@
-package com.nfd.libgenscan
+package com.nfd.libgenscan.openLibrary
 
 import com.google.gson.*
 import java.lang.reflect.Type

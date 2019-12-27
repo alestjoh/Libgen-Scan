@@ -7,15 +7,13 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.google.gson.GsonBuilder
+import com.nfd.libgenscan.openLibrary.BookResponse
+import com.nfd.libgenscan.openLibrary.OpenLibraryService
 import me.dm7.barcodescanner.zbar.Result
 import me.dm7.barcodescanner.zbar.ZBarScannerView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.lang.Exception
 
 /* Scanning UI and main menu. This should always be the first thing the user sees on launch.
  * TODO: add history menu, autoscan option, and restore support for pre-Marshmallow if possible
@@ -38,15 +36,7 @@ class MainActivity : Activity(), ZBarScannerView.ResultHandler {
             prepareCamera()
         }
 
-        val bookDeserializer = GsonBuilder()
-                .setLenient()
-                .registerTypeAdapter(BookResponse::class.java, BookResponseDeserializer())
-                .create()
-        val retrofit = Retrofit.Builder()
-                .baseUrl("https://openlibrary.org/api/")
-                .addConverterFactory(GsonConverterFactory.create(bookDeserializer))
-                .build()
-        val openLibraryService = retrofit.create(OpenLibraryService::class.java)
+        val openLibraryService = OpenLibraryService.getInstance()
         openLibraryService.getBook("ISBN:9780980200447").enqueue(object : Callback<BookResponse> {
             override fun onFailure(call: Call<BookResponse>, t: Throwable) {
                 throw t

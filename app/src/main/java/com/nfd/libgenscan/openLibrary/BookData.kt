@@ -1,4 +1,4 @@
-package com.nfd.libgenscan
+package com.nfd.libgenscan.openLibrary
 
 data class BookResponse(
         val bookData: BookData
