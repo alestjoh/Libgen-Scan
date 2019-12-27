@@ -24,6 +24,7 @@ android {
     }
     productFlavors {
     }
+
 }
 
 dependencies {
@@ -40,5 +41,5 @@ dependencies {
 }
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
