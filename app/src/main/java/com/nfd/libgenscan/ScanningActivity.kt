@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.Toast
 import com.nfd.libgenscan.openLibrary.BookResponse
 import com.nfd.libgenscan.openLibrary.OpenLibraryService
+import me.dm7.barcodescanner.zbar.BarcodeFormat
 import me.dm7.barcodescanner.zbar.Result
 import me.dm7.barcodescanner.zbar.ZBarScannerView
 import retrofit2.Call
@@ -20,7 +21,7 @@ import retrofit2.Response
  */
 
 //AppCompatActivity was actually causing crashes?
-class MainActivity : Activity(), ZBarScannerView.ResultHandler {
+class ScanningActivity : Activity(), ZBarScannerView.ResultHandler {
     private val mScannerView: ZBarScannerView by lazy { ZBarScannerView(this) }
 
     //TODO: annotate s.t. < 23 are accepted
@@ -59,6 +60,11 @@ class MainActivity : Activity(), ZBarScannerView.ResultHandler {
     private fun prepareCamera() {
         mScannerView.startCamera()
         mScannerView.setResultHandler(this)
+
+        val result = Result()
+        result.barcodeFormat = BarcodeFormat.ISBN13
+        result.contents = "9780980200447"
+        handleResult(result)
     }
 
     override fun onDestroy() {
@@ -84,6 +90,7 @@ class MainActivity : Activity(), ZBarScannerView.ResultHandler {
         } catch (e: Exception) {
             Toast.makeText(applicationContext, "Barcode format not supported; try another book.",
                     Toast.LENGTH_SHORT).show()
+            Log.w(TAG, "Barcode format not supported; try another book.")
             mScannerView.resumeCameraPreview(this)
         }
     }
@@ -106,6 +113,6 @@ class MainActivity : Activity(), ZBarScannerView.ResultHandler {
 
     companion object {
         const val PERMISSION_REQUEST_CAMERA = 1
-        val TAG: String = MainActivity::class.java.simpleName
+        val TAG: String = ScanningActivity::class.java.simpleName
     }
 }

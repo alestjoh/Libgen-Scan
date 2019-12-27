@@ -12,7 +12,7 @@ data class BookData(
         val url: String?,
         val title: String?,
         val subtitle: String?,
-        val authors: List<Author>
+        val authors: List<Author>?
 )
 
 data class Author(
