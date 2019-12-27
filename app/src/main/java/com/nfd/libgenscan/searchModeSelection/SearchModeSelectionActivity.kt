@@ -2,7 +2,9 @@ package com.nfd.libgenscan.searchModeSelection
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.nfd.libgenscan.R
 import com.nfd.libgenscan.openLibrary.BookData
 import kotlinx.android.synthetic.main.activity_search_mode_selection.*
@@ -19,12 +21,22 @@ class SearchModeSelectionActivity : Activity() {
         textView_bookData_searchMode.text = book.toString()
 
         button_isbnSearch_searchMode.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, LibgenUri.getIsbnUri(book.isbn ?: "")))
+            searchLibgen(LibgenUri.getIsbnUri(book.isbn ?: ""))
         }
 
         button_titleSearch_searchMode.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, LibgenUri.getTitleUri(book.title ?: "")))
+            searchLibgen(LibgenUri.getTitleUri(book.title ?: ""))
         }
+
+        recyclerView_authors_searchMode.adapter = AuthorAdapter(
+                book.authors ?: emptyList()) {
+            searchLibgen(LibgenUri.getAuthorUri(it))
+        }
+        recyclerView_authors_searchMode.layoutManager = LinearLayoutManager(this)
+    }
+
+    private fun searchLibgen(uri: Uri) {
+        startActivity(Intent(Intent.ACTION_VIEW, uri))
     }
 
     companion object {

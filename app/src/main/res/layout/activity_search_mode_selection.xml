@@ -42,6 +42,7 @@
         app:layout_constraintTop_toBottomOf="@id/button_isbnSearch_searchMode" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView_authors_searchMode"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="32dp"

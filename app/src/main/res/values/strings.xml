@@ -2,4 +2,5 @@
     <string name="app_name">Libgen Scan</string>
     <string name="search_by_exact_isbn">Search by exact ISBN</string>
     <string name="search_by_title">Search by title</string>
+    <string name="search_by_author">Search by author: %s</string>
 </resources>

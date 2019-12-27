@@ -64,10 +64,10 @@ class ScanningActivity : Activity(), ZBarScannerView.ResultHandler {
         mScannerView.setResultHandler(this)
 
         // TODO: Delete after done testing handleResult
-        val result = Result()
-        result.barcodeFormat = BarcodeFormat.ISBN13
-        result.contents = "9780980200447"
-        handleResult(result)
+//        val result = Result()
+//        result.barcodeFormat = BarcodeFormat.ISBN13
+//        result.contents = "9780980200447"
+//        handleResult(result)
     }
 
     override fun onDestroy() {
